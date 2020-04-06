@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_acquirer_form_wspay" model="ir.ui.view">
+        <field name="name">payment.acquirer.form.wspay</field>
+        <field name="model">payment.acquirer</field>
+        <field name="inherit_id" ref="payment.acquirer_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//group[@name="acquirer"]' position='inside'>
+                <group attrs="{'invisible': [('provider', '!=', 'wspay')]}">
+                    <field name="shop_id"/>
+<!--                    <field name="secret_key" password="True"/>-->
+                    <field name="secret_key"/>
+                    <field name="user_name"/>
+<!--                    <field name="password" password="True"/>-->
+                    <field name="password"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
