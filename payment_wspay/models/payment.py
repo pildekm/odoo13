@@ -12,6 +12,7 @@ from payment_wspay.controllers.main import WSpayController
 from odoo.addons.payment.models.payment_acquirer import ValidationError
 import hashlib
 import re
+import dateutil
 
 _logger = logging.getLogger(__name__)
 
@@ -131,36 +132,44 @@ class PaymentTransaction(models.Model):
                     """))
         return True
 
-    def write(self, vals):
-        if vals.get('currency_id') or vals.get('acquirer_id'):
-            for payment in self:
-                check_vals = {
-                    'acquirer_id': vals.get('acquirer_id', payment.acquirer_id.id),
-                    'currency_id': vals.get('currency_id', payment.currency_id.id)
-                }
-                payment._check_wspay_configuration(check_vals)
-        return super(PaymentTransaction, self).write(vals)
 
     @api.model
     def create(self, vals):
         self._check_wspay_configuration(vals)
         return super(PaymentTransaction, self).create(vals)
 
+
     # --------------------------------------------------
     # FORM RELATED METHODS
     # --------------------------------------------------
-
+    #TODO isprobaj shoping cart id sa reference zamjenit
+    #TODO popunina formi type =hidden
     @api.model
     def _wspay_form_get_tx_from_data(self, data):
-        return {}
+        t_ids = self.env['sale.order'].search([('id','=', data['ShoppingCartID'])]).transaction_ids.ids
+        txs = self.env['payment.transaction'].search([('id', 'in', t_ids)], limit=1)
+        if not txs or len(txs) > 1:
+            error_msg = 'WSPay: received data for reference %s' % (data.get('ShoppingCartID', 'Error'))
+            if not txs:
+                error_msg += '; no order found'
+            else:
+                error_msg += '; multiple order found'
+            _logger.info(error_msg)
+            raise ValidationError(error_msg)
+
+        return txs
 
     def _wspay_form_get_invalid_parameters(self, data):
         invalid_parameters = []
-        # data.get('currency') != self.currency_id.name
         return invalid_parameters
 
     def _wspay_form_validate(self, data):
-        cart_id = data.get('ShoppingCartID')
-        cart_obj = self.env['sale.order'].search([('id', '=', cart_id)])
-        cart_obj.action_confirm()
-        return cart_obj
+        former_tx_state = self.state
+        date = fields.Datetime.now()
+        res = {'acquirer_reference': data.get('WsPayOrderId'),
+              'date': date,}
+        self._set_transaction_done()
+        return self.write(res)
+
+
+

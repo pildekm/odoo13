@@ -2,24 +2,24 @@
 <odoo>
     <template id="wspay_form">
         <div>
-            <input type="" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
-            <input type=" " name="ShopID" t-att-value="ShopID"/>
-            <input type=" " name="ShoppingCartID" t-att-value="ShoppingCartID"/>
-            <input type=" " name="TotalAmount" t-att-value="TotalAmount"/>
-            <input type=" " name="Signature" t-att-value="Signature"/>
-            <input type=" " name="Lang" t-att-value="Lang"/>
-            <input type=" " name="CustomerFirstName" t-att-value="CustomerFirstName"/>
-            <input type=" " name="CustomerLastName" t-att-value="CustomerLastName"/>
-            <input type=" " name="CustomerAddress" t-att-value="CustomerAddress"/>
-            <input type=" " name="CustomerCity" t-att-value="CustomerCity"/>
-            <input type=" " name="CustomerZIP" t-att-value="CustomerZIP"/>
-            <input type=" " name="CustomerCountry" t-att-value="CustomerCountry"/>
-            <input type=" " name="CustomerEmail" t-att-value="CustomerEmail"/>
-            <input type=" " name="CustomerPhone" t-att-value="CustomerPhone"/>
+            <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
+            <input type="hidden" name="ShopID" t-att-value="ShopID"/>
+            <input type="hidden" name="ShoppingCartID" t-att-value="ShoppingCartID"/>
+            <input type="hidden" name="TotalAmount" t-att-value="TotalAmount"/>
+            <input type="hidden" name="Signature" t-att-value="Signature"/>
+            <input type="hidden" name="Lang" t-att-value="Lang"/>
+            <input type="hidden" name="CustomerFirstName" t-att-value="CustomerFirstName"/>
+            <input type="hidden" name="CustomerLastName" t-att-value="CustomerLastName"/>
+            <input type="hidden" name="CustomerAddress" t-att-value="CustomerAddress"/>
+            <input type="hidden" name="CustomerCity" t-att-value="CustomerCity"/>
+            <input type="hidden" name="CustomerZIP" t-att-value="CustomerZIP"/>
+            <input type="hidden" name="CustomerCountry" t-att-value="CustomerCountry"/>
+            <input type="hidden" name="CustomerEmail" t-att-value="CustomerEmail"/>
+            <input type="hidden" name="CustomerPhone" t-att-value="CustomerPhone"/>
             <!-- URLs -->
-            <input type=" " name='ReturnURL' t-att-value="ReturnURL"/>
-            <input type=" " name='CancelURL' t-att-value="CancelURL"/>
-            <input type=" " name="ReturnErrorURL" t-att-value="ReturnErrorURL"/>
+            <input type="hidden" name='ReturnURL' t-att-value="ReturnURL"/>
+            <input type="hidden" name='CancelURL' t-att-value="CancelURL"/>
+            <input type="hidden" name="ReturnErrorURL" t-att-value="ReturnErrorURL"/>
         </div>
     </template>
 </odoo>

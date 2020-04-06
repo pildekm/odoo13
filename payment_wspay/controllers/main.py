@@ -42,7 +42,9 @@ class WSpayController(http.Controller):
         # verify the transaction.
         if (post['Success'] != '1' or post['ApprovalCode'] == '' or post['Signature'] != signature):
             return werkzeug.utils.redirect(self._error_url)
-        return request.env['payment.transaction'].sudo()._wspay_form_validate(post)
+        # return request.env['payment.transaction'].sudo()._wspay_form_validate(post)
+        res = request.env['payment.transaction'].sudo().form_feedback(post, 'wspay')
+        return res
 
     def _wspay_validate_notification(self, **post):
         wspay = request.env['payment.acquirer'].sudo().search([('provider', '=', 'wspay')])
@@ -53,24 +55,20 @@ class WSpayController(http.Controller):
 
     @http.route(['/payment/wspay/return',], type='http', auth='public', methods=['GET','POST'])
     def wspay_return(self, **post):
-        """
-                WSPay return
-                View that is accessed by the WSPay when the transaction is complete.
-                Here the data returned is validated and cart is either converted
-                to an order or gets deleted. Depending on the result either success
-                or failed template is rendered.
-                """
-        _logger.info('Beginning WSPAY form_feedback with post data %s', pprint.pformat(post))
-        cart_obj = self._wspay_validate_data(**post)
-        payment_acquirer = request.env['payment.acquirer'].sudo().search([('provider', '=', 'wspay')])
-        # _logger.info('URL for redirecting: {}'.format(url))
-        base_url = payment_acquirer.get_base_url()
-        # url = 'my/orders/{}?access_token={}'.format(cart_obj.id, cart_obj.access_token)
-        #TODO provjeri zašto ne dobijem access_token wtf?
-        url = 'my/orders/{}?'.format(cart_obj.id)
-        url = urls.url_join(base_url, url)
-        #redirect na sale order koj je plačen
-        return werkzeug.utils.redirect(url)
+        """WSPay return """
+        # _logger.info('Beginning WSPAY form_feedback with post data %s', pprint.pformat(post))
+        # cart_obj = self._wspay_validate_data(**post)
+        # payment_acquirer = request.env['payment.acquirer'].sudo().search([('provider', '=', 'wspay')])
+        #  _logger.info('URL for redirecting: {}'.format(url))
+        # base_url = payment_acquirer.get_base_url()
+        #  url = 'my/orders/{}?access_token={}'.format(cart_obj.id, cart_obj.access_token)
+        # TODO provjeri zašto ne dobijem access_token wtf?
+        # url = 'my/orders/{}?'.format(cart_obj.id)
+        # url = urls.url_join(base_url, url)
+        # redirect na sale order koj je plačen
+        # return werkzeug.utils.redirect(url)
+        res = self._wspay_validate_data(**post)
+        return werkzeug.utils.redirect('/payment/process')
 
 
     @http.route(['/payment/wspay/cancel',], type='http', auth='public', methods=['GET','POST'])
@@ -78,11 +76,11 @@ class WSpayController(http.Controller):
         """ WSPay Cancel """
         _logger.info('Beginning Alipay notification form_feedback with post data %s', pprint.pformat(post))
         self._wspay_validate_notification(**post)
-        return werkzeug.utils.sudo().redirect('/payment/process')
+        #return werkzeug.utils.redirect('/payment/process')
 
     @http.route(['/payment/wspay/error',], type='http', auth='public', methods=['GET', 'POST'])
     def wspay_error(self, **post):
         """ WSPay Notify """
         _logger.info('WSPay error %s', pprint.pformat(post))
         self._wspay_validate_notification(**post)
-        return werkzeug.utils.redirect('/payment/process')
+        #return werkzeug.utils.redirect('/payment/process')
