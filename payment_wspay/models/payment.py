@@ -143,7 +143,7 @@ class PaymentTransaction(models.Model):
     # FORM RELATED METHODS
     # --------------------------------------------------
     #TODO isprobaj shoping cart id sa reference zamjenit
-    #TODO popunina formi type =hidden
+
     @api.model
     def _wspay_form_get_tx_from_data(self, data):
         t_ids = self.env['sale.order'].search([('id','=', data['ShoppingCartID'])]).transaction_ids.ids
