@@ -75,8 +75,15 @@ class PaymentAcquirer(models.Model):
         return signature
 
     def _get_cart_id(self, values):
-        cart_id = self.env['sale.order'].search([('name', '=', values['reference'].split('-')[0])]).id
-        return cart_id
+        """ Search cart_id, where cart_id==sale_order_id
+        reference from values is reference of the cart
+        SO name  == reference-number in e-commerce
+        cart_id.reference -> S0001-1, S0001-2, S0001-3 value is Sale Order Name S0001
+        :return cart_id+last digit of cart reference"""
+        cart_reference, digit = values['reference'].split('-')
+        cart_id = self.env['sale.order'].search([('name', '=', cart_reference)]).id
+        cart_id_ref = str(cart_id) + digit
+        return cart_id_ref
 
     def form_total(self, amount):
         total_amount = '{:.2f}'.format(amount).rsplit('.', 1)
@@ -146,10 +153,13 @@ class PaymentTransaction(models.Model):
 
     @api.model
     def _wspay_form_get_tx_from_data(self, data):
-        t_ids = self.env['sale.order'].search([('id','=', data['ShoppingCartID'])]).transaction_ids.ids
-        txs = self.env['payment.transaction'].search([('id', 'in', t_ids)], limit=1)
+        """kreiramo reference zbog website sale, sale order name S0001 -> cart_id S0001-1, S0001-2 ..."""
+        cart_id, ref_digit = data['ShoppingCartID'][:-1], data['ShoppingCartID'][-1]
+        so_name = self.env['sale.order'].search([('id', '=', cart_id)]).name
+        reference = so_name + '-' + ref_digit
+        txs = self.env['payment.transaction'].search([('reference', '=', reference)])
         if not txs or len(txs) > 1:
-            error_msg = 'WSPay: received data for reference %s' % (data.get('ShoppingCartID', 'Error'))
+            error_msg = 'WSPay: received data for reference %s' % (data.get('reference', 'Error'))
             if not txs:
                 error_msg += '; no order found'
             else:
