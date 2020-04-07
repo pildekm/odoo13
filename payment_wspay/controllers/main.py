@@ -63,7 +63,7 @@ class WSpayController(http.Controller):
     @http.route(['/payment/wspay/cancel',], type='http', auth='public', methods=['GET','POST'])
     def wspay_cancel(self, **post):
         """ WSPay Cancel """
-        _logger.info('Beginning Alipay notification form_feedback with post data %s', pprint.pformat(post))
+        _logger.info('Beginning WSPAY notification form_feedback with post data %s', pprint.pformat(post))
         self._wspay_validate_notification(**post)
         #return werkzeug.utils.redirect('/payment/process')
 
