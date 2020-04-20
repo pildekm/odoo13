@@ -6,5 +6,5 @@
         <field name="provider">wspay</field>
         <field name="company_id" ref="base.main_company"/>
         <field name="view_template_id" ref="wspay_form"/>
-    </record>
+    </record>e
 </odoo>
