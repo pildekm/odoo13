@@ -6,7 +6,7 @@
     'category': 'Accounting/Payment',
     'summary': 'Payment Acquirer: WsPay Implementation',
     'description': """WSPay Payment Acquirer""",
-    'author': "SecondIncome",
+    'author': "BonsaiIT",
     'depends': ['payment'],
     'data': [
         'views/wspay_views.xml',
